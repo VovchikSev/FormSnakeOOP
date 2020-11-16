@@ -20,10 +20,7 @@ namespace FormSnakeOOP
         /// Диаметр точки, совпадает с масштабом
         /// </summary>
         int diametr;
-        /// <summary>
-        /// масштаб
-        /// </summary>
-        int scale;
+        
         /// <summary>
         /// Кисть которой рисуется точка.
         /// </summary>
@@ -37,20 +34,66 @@ namespace FormSnakeOOP
         // инициализацию сделать в конструкторе
         public int X { get => x; set => x = value; }
         public int Y { get => y; set => y = value; }
-        public PointLocal(int _x, int _y, int _diametr, Color _color, GameBoard _gameBoard )
-        
+        public Color Color { get => pointBrush.Color; set => pointBrush.Color = value; }
+        public PointLocal(int _x, int _y, Color _color, GameBoard _gameBoard )        
         {
-
-
-        x = _x;
-            y = _y;
-            diametr = _diametr;
+            x = _x;
+            y = _y;            
             pointBrush = new System.Drawing.SolidBrush(_color);
             gameBoard = _gameBoard;
+            diametr = gameBoard.Scale;
             graph = gameBoard.Graph;
         }
 
+        public PointLocal(PointLocal p)
+        {
+            x = p.x;
+            y = p.y;
+            diametr = p.diametr;
+            gameBoard = p.gameBoard;
+            pointBrush = p.pointBrush;
+            graph = p.graph;
+        }
 
+        public void Move(int offset, Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.RIGHT:
+                    /*
+                    if (direction != Direction.LEFT)
+                        direction = Direction.RIGT; */
+
+                    x = x + offset;
+                    break;
+                case Direction.LEFT:
+                    /*
+                    if (direction != Direction.RIGT)
+                        direction = Direction.LEFT;
+                        */
+                    x = x - offset;
+                    break;
+                case Direction.UP:
+                    /*
+                    if (direction != Direction.Down)
+                        direction = Direction.UP;*/
+
+                    y = y - offset;
+                    break;
+                case Direction.Down:
+                    /*
+                    if (direction != Direction.UP)
+                        direction = Direction.Down;*/
+                    y = y + offset;
+                    break;
+                default: break;
+
+            }
+        }
+        public override string ToString()
+        {
+            return x + ", " + y + diametr;
+        }
         public void Draw()
         {
             graph.FillEllipse(pointBrush, x * diametr, y * diametr, diametr, diametr);
@@ -68,6 +111,9 @@ namespace FormSnakeOOP
             graph.FillEllipse(gameBoard.ClerBrush, x * diametr, y * diametr, diametr, diametr);
             gameBoard.PictureBox.Invalidate();           
         }
-
+        public bool IsHit(PointLocal p)
+        {
+            return p.x == this.x && p.y == this.y;
+        }
     }
 }

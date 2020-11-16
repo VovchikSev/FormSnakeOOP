@@ -30,67 +30,77 @@ namespace FormSnakeOOP
         GameBoard gameBoard;
 
         PointLocal testPont;
-        Random R;
-        int _counter;
+        
+        //int _counter
+        Snake snake;
+        FoodCreator foodCreator;
+        PointLocal food;
 
         public SnakeForm()
         {
             InitializeComponent();
             // начальная инициализация компонентов
             scale = 10; //масштаб
-            _counter = 0;
+            //_counter = 0;
             // GameFieldPictueBox.Image = new Bitmap(GameFieldPictueBox.Width, GameFieldPictueBox.Height);
             fieldHeight = GameFieldPictueBox.Height / scale;
             fieldWidth = GameFieldPictueBox.Width / scale;
-            R = new Random();
+            
             // создать доску с белым фоном
             gameBoard = new GameBoard(GameFieldPictueBox, scale, Color.White);
             SolidBrush whiteBrush = new SolidBrush(Color.White);
-            gameBoard.Graph.FillRectangle(whiteBrush, 0, 0, GameFieldPictueBox.Width, GameFieldPictueBox.Height);
+            //gameBoard.Graph.FillRectangle(whiteBrush, 0, 0, GameFieldPictueBox.Width, GameFieldPictueBox.Height);
 
-            testPont = new PointLocal(fieldWidth / 2, fieldHeight / 2, scale, Color.Gray, gameBoard);
-            testPont.Draw();
-
-
-
-            // HorisontalLine topLine = new HorisontalLine(0, fieldWidth, Color.Red);
-
-
-            //GameBoard = Graphics.FromImage(GameFieldPictueBox.Image);
-            // альтернатива заливке всего поля очистка. позднее проверить как работает очистка на смене изображения, 
-            // если что вернуться к перезаливке белого квадрата.
+            // нарисовать рамку через объекты горизонтальная и вертикальная линия
             
-            
-            //GameBoard.Clear(Color.White);
-            // попытка отрисовать бордюры из класса  с помощью списка точек
-            /*
-            int diametrBorderPoint = 20;
-            HorisontalLine UpLine = new HorisontalLine(0, GameFieldPictueBox.Width / diametrBorderPoint, 0, diametrBorderPoint, Color.Brown);
-            UpLine.Draw(GameBoard, GameFieldPictueBox);
-            HorisontalLine DownLine = new HorisontalLine(0, GameFieldPictueBox.Width / diametrBorderPoint,  
-                                      GameFieldPictueBox.Height / diametrBorderPoint, diametrBorderPoint, Color.Black);
-            DownLine.Draw(GameBoard, GameFieldPictueBox);
-            */
+            HorisontalLine upLine = new HorisontalLine(0, fieldWidth, 0 , 10,Color.DarkRed , gameBoard);
+            upLine.Draw();
+            HorisontalLine downLine = new HorisontalLine(1, fieldWidth,  fieldHeight-1, 10, Color.DarkRed, gameBoard);
+            downLine.Draw();
 
+            VerticalLine leftLine = new VerticalLine(0, 0, fieldHeight , 10, Color.DarkRed, gameBoard);
+            leftLine.Draw();
+            VerticalLine rightLine = new VerticalLine(fieldWidth -1, 0, fieldHeight, 10, Color.DarkRed, gameBoard);
+            rightLine.Draw();
+            //-------------------
+            // создание и вывод первой точки
+            testPont = new PointLocal(fieldWidth / 2, fieldHeight / 2, Color.Red, gameBoard);
+            snake = new Snake(testPont, 4, Direction.RIGHT);
+            snake.Draw();
+            snake.Move();
+
+            foodCreator = new FoodCreator( Color.Green, gameBoard);
+            food = foodCreator.CreateFood();
+            food.Draw();
         }
 
         private void GameTimer_Tick(object sender, EventArgs e)
         {
+            if (snake.Eat(food))
+            {
+                food = foodCreator.CreateFood();
+                food.Draw();
+            }
+            else
+            { 
+                snake.Move(); 
+            }
+        }
 
-            // срабатывание тика
-            // gameBoard.Graph.DrawString внести строку на канву
-            //стереть точку нарисовать в новом месте
-            // testPont.Clear();
-            testPont.X = R.Next(fieldWidth);
-            testPont.Y = R.Next(fieldHeight);
-            testPont.Draw();
+        private void SnakeForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                GameTimer.Enabled = !GameTimer.Enabled;
+            else
+                if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
+                  snake.HandleKey(e);
 
         }
         /*
 private void DrawPoint(PointLocal point, Graphics graph)
 {
-   graph.FillEllipse(point.pointBrush, point.x*point.diametr, point.y * point.diametr, point.diametr, point.diametr);
-   GameFieldPictueBox.Invalidate();
+graph.FillEllipse(point.pointBrush, point.x*point.diametr, point.y * point.diametr, point.diametr, point.diametr);
+GameFieldPictueBox.Invalidate();
 }*/
     }
 }

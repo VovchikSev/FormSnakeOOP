@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace FormSnakeOOP
 {
@@ -23,6 +24,7 @@ namespace FormSnakeOOP
         /// </summary>
         private SolidBrush paintBrush; 
 
+        public int Scale { get { return scale; } }
         public Graphics Graph { get { return graph; } }
         public System.Windows.Forms.PictureBox PictureBox { get{ return pictureBox; } }
         public SolidBrush ClerBrush { get {return clearBrush;}  }

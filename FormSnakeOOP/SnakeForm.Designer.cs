@@ -67,6 +67,7 @@
             // GameTimer
             // 
             this.GameTimer.Enabled = true;
+            this.GameTimer.Interval = 300;
             this.GameTimer.Tick += new System.EventHandler(this.GameTimer_Tick);
             // 
             // SnakeForm
@@ -78,6 +79,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "SnakeForm";
             this.Text = "Snke with classes";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SnakeForm_KeyDown);
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GameFieldPictueBox)).EndInit();
             this.ResumeLayout(false);
