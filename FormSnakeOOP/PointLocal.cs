@@ -20,29 +20,40 @@ namespace FormSnakeOOP
         /// Диаметр точки, совпадает с масштабом
         /// </summary>
         int diametr;
-        
+
         /// <summary>
         /// Кисть которой рисуется точка.
         /// </summary>
-        SolidBrush pointBrush ;
+        SolidBrush pointBrush;
         /// <summary>
         /// Объект Graphics на котором будет отображаться точка.
         /// </summary>
-        Graphics graph;
+        
         GameBoard gameBoard;
         // скрыть излишне открытые члены
         // инициализацию сделать в конструкторе
         public int X { get => x; set => x = value; }
         public int Y { get => y; set => y = value; }
         public Color Color { get => pointBrush.Color; set => pointBrush.Color = value; }
-        public PointLocal(int _x, int _y, Color _color, GameBoard _gameBoard )        
+
+        public SolidBrush PointBrush { get => pointBrush; }
+
+        public int Diametr { get => diametr; }
+        /// <summary>
+        /// Конструктор точки
+        /// </summary>
+        /// <param name="x">относительная координата по X</param>
+        /// <param name="y">относительная координата по Y</param>
+        /// <param name="_color">Цвет точки</param>
+        /// <param name="_gameBoard">Игровое пле, на котором будет отображена точка</param>
+        /// <param name="diametr">диаметр точки, абсолютный размер, если не задан или = 0 то за диаметр будет принят масштаб игрового поля</param>
+        public PointLocal(int x, int y, Color _color, GameBoard _gameBoard, int diametr = 0 )        
         {
-            x = _x;
-            y = _y;            
-            pointBrush = new System.Drawing.SolidBrush(_color);
+            this.x = x;
+            this.y = y;            
+            pointBrush = new SolidBrush(_color);
             gameBoard = _gameBoard;
-            diametr = gameBoard.Scale;
-            graph = gameBoard.Graph;
+            this.diametr = (diametr == 0) ? gameBoard.Scale : diametr;
         }
 
         public PointLocal(PointLocal p)
@@ -52,7 +63,7 @@ namespace FormSnakeOOP
             diametr = p.diametr;
             gameBoard = p.gameBoard;
             pointBrush = p.pointBrush;
-            graph = p.graph;
+            //graph = p.graph;
         }
 
         public void Move(int offset, Direction direction)
@@ -96,9 +107,12 @@ namespace FormSnakeOOP
         }
         public void Draw()
         {
-            graph.FillEllipse(pointBrush, x * diametr, y * diametr, diametr, diametr);
+            // перенести в GameBoard. Тогда точке не 
+            //graph.FillEllipse(pointBrush, x * diametr, y * diametr, diametr, diametr);
             // перенести в обработчик таймера и там перерисовывать. 
-            gameBoard.PictureBox.Invalidate();
+            gameBoard.DrawPoint(this);
+
+            //gameBoard.PictureBox.Invalidate();
         }
         // сделать другой Draw, где не будет смещения по диаметру.
         // нужно понимание роцесса рисования. 
@@ -107,9 +121,7 @@ namespace FormSnakeOOP
        
         public void Clear()
         {
-            // стирание точки, нарисовать точку цветом фона
-            graph.FillEllipse(gameBoard.ClerBrush, x * diametr, y * diametr, diametr, diametr);
-            gameBoard.PictureBox.Invalidate();           
+            gameBoard.ClearPoint(this);
         }
         public bool IsHit(PointLocal p)
         {
