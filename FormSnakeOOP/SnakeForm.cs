@@ -35,6 +35,7 @@ namespace FormSnakeOOP
         Snake snake;
         FoodCreator foodCreator;
         PointLocal food;
+        Walls walls;
 
         public SnakeForm()
         {
@@ -47,6 +48,10 @@ namespace FormSnakeOOP
             
             // создать доску с белым фоном
             gameBoard = new GameBoard(GameFieldPictueBox, scale, Color.White);
+
+            // нарисовать рамку через объект стены ему передать относительные координаты игрового поля
+            walls = new Walls(gameBoard.RelativeX, gameBoard.RelativeY, gameBoard.Scale, Color.BlueViolet, gameBoard);
+            walls.Draw();
             //SolidBrush whiteBrush = new SolidBrush(Color.White);
             //gameBoard.Graph.FillRectangle(whiteBrush, 0, 0, GameFieldPictueBox.Width, GameFieldPictueBox.Height);
 
@@ -83,6 +88,14 @@ namespace FormSnakeOOP
         private void GameTimer_Tick(object sender, EventArgs e)
         {
             // Тут же проверять условия победы. их продумаем в процессе.
+
+            // проверка столкновения со стеной.
+            if (walls.IsHit(snake)||snake.IsHitTail())
+            {
+                GameTimer.Enabled = false;
+                MessageBox.Show("Столкновение со стеной недопустимо!\nПроигрыш.");
+                return;
+            }
 
             // это пррверяется до движения, если съели, то движение и приращение будет в классе змеи
             if (snake.Eat(food))
